@@ -1,0 +1,1036 @@
+{
+	"annotations": {
+	  "list": [
+		{
+		  "builtIn": 1,
+		  "datasource": {
+			"type": "grafana",
+			"uid": "-- Grafana --"
+		  },
+		  "enable": true,
+		  "hide": true,
+		  "iconColor": "rgba(0, 211, 255, 1)",
+		  "name": "Annotations & Alerts",
+		  "type": "dashboard"
+		}
+	  ]
+	},
+	"editable": true,
+	"fiscalYearStartMonth": 0,
+	"graphTooltip": 0,
+	"links": [],
+	"panels": [
+	  {
+		"collapsed": false,
+		"gridPos": {
+		  "h": 1,
+		  "w": 24,
+		  "x": 0,
+		  "y": 0
+		},
+		"id": 3,
+		"panels": [],
+		"title": "Users",
+		"type": "row"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "thresholds"
+			},
+			"mappings": [],
+			"thresholds": {
+			  "mode": "absolute",
+			  "steps": [
+				{
+				  "color": "green",
+				  "value": null
+				},
+				{
+				  "color": "red",
+				  "value": 80
+				}
+			  ]
+			}
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 8,
+		  "w": 6,
+		  "x": 0,
+		  "y": 1
+		},
+		"id": 1,
+		"options": {
+		  "colorMode": "value",
+		  "graphMode": "area",
+		  "justifyMode": "auto",
+		  "orientation": "auto",
+		  "reduceOptions": {
+			"calcs": [
+			  "lastNotNull"
+			],
+			"fields": "",
+			"values": false
+		  },
+		  "showPercentChange": false,
+		  "textMode": "auto",
+		  "wideLayout": true
+		},
+		"pluginVersion": "11.0.0",
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "back_total_users",
+			"fullMetaSearch": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "Total Users",
+			"range": true,
+			"refId": "Total Users",
+			"useBackend": false
+		  }
+		],
+		"title": "Total Users",
+		"type": "stat"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "thresholds"
+			},
+			"mappings": [],
+			"thresholds": {
+			  "mode": "absolute",
+			  "steps": [
+				{
+				  "color": "green",
+				  "value": null
+				},
+				{
+				  "color": "red",
+				  "value": 80
+				}
+			  ]
+			}
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 8,
+		  "w": 6,
+		  "x": 6,
+		  "y": 1
+		},
+		"id": 18,
+		"options": {
+		  "colorMode": "value",
+		  "graphMode": "area",
+		  "justifyMode": "auto",
+		  "orientation": "auto",
+		  "reduceOptions": {
+			"calcs": [
+			  "lastNotNull"
+			],
+			"fields": "",
+			"values": false
+		  },
+		  "showPercentChange": false,
+		  "textMode": "auto",
+		  "wideLayout": true
+		},
+		"pluginVersion": "11.0.0",
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "back_total_2fa_users",
+			"fullMetaSearch": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "Total Users",
+			"range": true,
+			"refId": "Total Users",
+			"useBackend": false
+		  }
+		],
+		"title": "User with 2FA",
+		"type": "stat"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "palette-classic"
+			},
+			"custom": {
+			  "axisBorderShow": false,
+			  "axisCenteredZero": false,
+			  "axisColorMode": "text",
+			  "axisLabel": "",
+			  "axisPlacement": "auto",
+			  "barAlignment": 0,
+			  "drawStyle": "line",
+			  "fillOpacity": 0,
+			  "gradientMode": "none",
+			  "hideFrom": {
+				"legend": false,
+				"tooltip": false,
+				"viz": false
+			  },
+			  "insertNulls": false,
+			  "lineInterpolation": "smooth",
+			  "lineWidth": 1,
+			  "pointSize": 5,
+			  "scaleDistribution": {
+				"type": "linear"
+			  },
+			  "showPoints": "auto",
+			  "spanNulls": false,
+			  "stacking": {
+				"group": "A",
+				"mode": "none"
+			  },
+			  "thresholdsStyle": {
+				"mode": "off"
+			  }
+			},
+			"mappings": [],
+			"thresholds": {
+			  "mode": "absolute",
+			  "steps": [
+				{
+				  "color": "green",
+				  "value": null
+				},
+				{
+				  "color": "red",
+				  "value": 80
+				}
+			  ]
+			}
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 8,
+		  "w": 12,
+		  "x": 12,
+		  "y": 1
+		},
+		"id": 2,
+		"options": {
+		  "legend": {
+			"calcs": [],
+			"displayMode": "list",
+			"placement": "bottom",
+			"showLegend": true
+		  },
+		  "tooltip": {
+			"maxHeight": 600,
+			"mode": "single",
+			"sort": "none"
+		  }
+		},
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "back_online_users",
+			"fullMetaSearch": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "Online Users",
+			"range": true,
+			"refId": "Online Users",
+			"useBackend": false
+		  }
+		],
+		"title": "Online Users",
+		"type": "timeseries"
+	  },
+	  {
+		"collapsed": false,
+		"gridPos": {
+		  "h": 1,
+		  "w": 24,
+		  "x": 0,
+		  "y": 9
+		},
+		"id": 6,
+		"panels": [],
+		"title": "Games",
+		"type": "row"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "palette-classic"
+			},
+			"custom": {
+			  "hideFrom": {
+				"legend": false,
+				"tooltip": false,
+				"viz": false
+			  }
+			},
+			"mappings": []
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 8,
+		  "w": 6,
+		  "x": 0,
+		  "y": 10
+		},
+		"id": 8,
+		"options": {
+		  "legend": {
+			"displayMode": "list",
+			"placement": "bottom",
+			"showLegend": true
+		  },
+		  "pieType": "pie",
+		  "reduceOptions": {
+			"calcs": [
+			  "lastNotNull"
+			],
+			"fields": "",
+			"values": false
+		  },
+		  "tooltip": {
+			"maxHeight": 600,
+			"mode": "single",
+			"sort": "none"
+		  }
+		},
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "max(back_total_pong2_matches)",
+			"fullMetaSearch": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "Pong 1vs1",
+			"range": true,
+			"refId": "Pong2",
+			"useBackend": false
+		  },
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "max by() (back_total_pong3_matches)",
+			"fullMetaSearch": false,
+			"hide": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "Pong 2vs1",
+			"range": true,
+			"refId": "Pong3",
+			"useBackend": false
+		  },
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "max(back_total_pong3_matches)",
+			"fullMetaSearch": false,
+			"hide": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "Royal",
+			"range": true,
+			"refId": "Royal",
+			"useBackend": false
+		  }
+		],
+		"title": "Game played per games",
+		"type": "piechart"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "palette-classic"
+			},
+			"custom": {
+			  "hideFrom": {
+				"legend": false,
+				"tooltip": false,
+				"viz": false
+			  }
+			},
+			"mappings": []
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 8,
+		  "w": 6,
+		  "x": 6,
+		  "y": 10
+		},
+		"id": 9,
+		"options": {
+		  "legend": {
+			"displayMode": "list",
+			"placement": "bottom",
+			"showLegend": true
+		  },
+		  "pieType": "pie",
+		  "reduceOptions": {
+			"calcs": [
+			  "lastNotNull"
+			],
+			"fields": "",
+			"values": false
+		  },
+		  "tooltip": {
+			"maxHeight": 600,
+			"mode": "single",
+			"sort": "none"
+		  }
+		},
+		"pluginVersion": "11.0.0",
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "back_won_pong2_matches{player!=\"\"}",
+			"fullMetaSearch": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "{{player}}",
+			"range": true,
+			"refId": "A",
+			"useBackend": false
+		  }
+		],
+		"title": "PONG 1vs1 - Game won per user",
+		"type": "piechart"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "palette-classic"
+			},
+			"custom": {
+			  "axisBorderShow": false,
+			  "axisCenteredZero": false,
+			  "axisColorMode": "text",
+			  "axisLabel": "",
+			  "axisPlacement": "auto",
+			  "barAlignment": 0,
+			  "drawStyle": "line",
+			  "fillOpacity": 0,
+			  "gradientMode": "none",
+			  "hideFrom": {
+				"legend": false,
+				"tooltip": false,
+				"viz": false
+			  },
+			  "insertNulls": false,
+			  "lineInterpolation": "linear",
+			  "lineWidth": 1,
+			  "pointSize": 5,
+			  "scaleDistribution": {
+				"type": "linear"
+			  },
+			  "showPoints": "auto",
+			  "spanNulls": false,
+			  "stacking": {
+				"group": "A",
+				"mode": "none"
+			  },
+			  "thresholdsStyle": {
+				"mode": "off"
+			  }
+			},
+			"mappings": [],
+			"thresholds": {
+			  "mode": "absolute",
+			  "steps": [
+				{
+				  "color": "green",
+				  "value": null
+				},
+				{
+				  "color": "red",
+				  "value": 80
+				}
+			  ]
+			}
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 8,
+		  "w": 12,
+		  "x": 12,
+		  "y": 10
+		},
+		"id": 19,
+		"options": {
+		  "legend": {
+			"calcs": [],
+			"displayMode": "list",
+			"placement": "bottom",
+			"showLegend": true
+		  },
+		  "tooltip": {
+			"maxHeight": 600,
+			"mode": "single",
+			"sort": "none"
+		  }
+		},
+		"pluginVersion": "11.0.0",
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "back_won_pong2_matches{player!=\"\"}",
+			"fullMetaSearch": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "{{player}}",
+			"range": true,
+			"refId": "A",
+			"useBackend": false
+		  }
+		],
+		"title": "PONG 1vs1 - Game won per user - Time graph",
+		"type": "timeseries"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "palette-classic"
+			},
+			"custom": {
+			  "hideFrom": {
+				"legend": false,
+				"tooltip": false,
+				"viz": false
+			  }
+			},
+			"mappings": []
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 8,
+		  "w": 6,
+		  "x": 0,
+		  "y": 18
+		},
+		"id": 13,
+		"options": {
+		  "legend": {
+			"displayMode": "list",
+			"placement": "bottom",
+			"showLegend": true
+		  },
+		  "pieType": "pie",
+		  "reduceOptions": {
+			"calcs": [
+			  "lastNotNull"
+			],
+			"fields": "",
+			"values": false
+		  },
+		  "tooltip": {
+			"maxHeight": 600,
+			"mode": "single",
+			"sort": "none"
+		  }
+		},
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "code",
+			"expr": "sum by(role) (back_won_pong3_matches{role!=\"\"})",
+			"fullMetaSearch": false,
+			"hide": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "__auto",
+			"range": true,
+			"refId": "A",
+			"useBackend": false
+		  }
+		],
+		"title": "Pong 2vs1 - Paddle vs Ball",
+		"type": "piechart"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "palette-classic"
+			},
+			"custom": {
+			  "hideFrom": {
+				"legend": false,
+				"tooltip": false,
+				"viz": false
+			  }
+			},
+			"mappings": []
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 8,
+		  "w": 6,
+		  "x": 6,
+		  "y": 18
+		},
+		"id": 11,
+		"options": {
+		  "legend": {
+			"displayMode": "list",
+			"placement": "bottom",
+			"showLegend": true
+		  },
+		  "pieType": "pie",
+		  "reduceOptions": {
+			"calcs": [
+			  "lastNotNull"
+			],
+			"fields": "",
+			"values": false
+		  },
+		  "tooltip": {
+			"maxHeight": 600,
+			"mode": "single",
+			"sort": "none"
+		  }
+		},
+		"pluginVersion": "11.0.0",
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "sum by(player) (back_won_pong3_matches{player!=\"\"})",
+			"fullMetaSearch": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "{{player}}",
+			"range": true,
+			"refId": "A",
+			"useBackend": false
+		  }
+		],
+		"title": "PONG 2vs1 - Game won per user",
+		"type": "piechart"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "palette-classic"
+			},
+			"custom": {
+			  "hideFrom": {
+				"legend": false,
+				"tooltip": false,
+				"viz": false
+			  }
+			},
+			"mappings": []
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 8,
+		  "w": 12,
+		  "x": 12,
+		  "y": 18
+		},
+		"id": 20,
+		"options": {
+		  "legend": {
+			"displayMode": "list",
+			"placement": "bottom",
+			"showLegend": true
+		  },
+		  "pieType": "pie",
+		  "reduceOptions": {
+			"calcs": [
+			  "lastNotNull"
+			],
+			"fields": "",
+			"values": false
+		  },
+		  "tooltip": {
+			"maxHeight": 600,
+			"mode": "single",
+			"sort": "none"
+		  }
+		},
+		"pluginVersion": "11.0.0",
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "sum by(player) (back_won_pong3_matches{player!=\"\"})",
+			"fullMetaSearch": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "{{player}}",
+			"range": true,
+			"refId": "A",
+			"useBackend": false
+		  }
+		],
+		"title": "PONG 2vs1 - Game won per user - Time Graph",
+		"type": "piechart"
+	  },
+	  {
+		"collapsed": false,
+		"gridPos": {
+		  "h": 1,
+		  "w": 24,
+		  "x": 0,
+		  "y": 26
+		},
+		"id": 10,
+		"panels": [],
+		"title": "Elo",
+		"type": "row"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "thresholds"
+			},
+			"mappings": [],
+			"thresholds": {
+			  "mode": "absolute",
+			  "steps": [
+				{
+				  "color": "dark-red",
+				  "value": null
+				},
+				{
+				  "color": "dark-green",
+				  "value": 1000
+				}
+			  ]
+			}
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 10,
+		  "w": 24,
+		  "x": 0,
+		  "y": 27
+		},
+		"id": 16,
+		"options": {
+		  "displayMode": "basic",
+		  "maxVizHeight": 42,
+		  "minVizHeight": 16,
+		  "minVizWidth": 8,
+		  "namePlacement": "left",
+		  "orientation": "horizontal",
+		  "reduceOptions": {
+			"calcs": [
+			  "lastNotNull"
+			],
+			"fields": "",
+			"values": false
+		  },
+		  "showUnfilled": false,
+		  "sizing": "manual",
+		  "text": {
+			"titleSize": 21,
+			"valueSize": 21
+		  },
+		  "valueMode": "color"
+		},
+		"pluginVersion": "11.0.0",
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "code",
+			"expr": "back_users_elo_pong{user!=\"\"}",
+			"fullMetaSearch": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "{{user}}",
+			"range": true,
+			"refId": "A",
+			"useBackend": false
+		  }
+		],
+		"title": "Elo PONG",
+		"type": "bargauge"
+	  },
+	  {
+		"collapsed": false,
+		"gridPos": {
+		  "h": 1,
+		  "w": 24,
+		  "x": 0,
+		  "y": 37
+		},
+		"id": 7,
+		"panels": [],
+		"title": "Friendships",
+		"type": "row"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "palette-classic"
+			},
+			"custom": {
+			  "hideFrom": {
+				"legend": false,
+				"tooltip": false,
+				"viz": false
+			  }
+			},
+			"mappings": []
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 8,
+		  "w": 4,
+		  "x": 0,
+		  "y": 38
+		},
+		"id": 14,
+		"options": {
+		  "legend": {
+			"displayMode": "list",
+			"placement": "bottom",
+			"showLegend": true
+		  },
+		  "pieType": "pie",
+		  "reduceOptions": {
+			"calcs": [
+			  "lastNotNull"
+			],
+			"fields": "",
+			"values": false
+		  },
+		  "tooltip": {
+			"maxHeight": 600,
+			"mode": "single",
+			"sort": "none"
+		  }
+		},
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "back_total_friend_requests{role=\"recipient\"}",
+			"fullMetaSearch": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "{{user}}({{role}})",
+			"range": true,
+			"refId": "A",
+			"useBackend": false
+		  }
+		],
+		"title": "Friend request received per user",
+		"type": "piechart"
+	  },
+	  {
+		"datasource": {
+		  "type": "prometheus",
+		  "uid": "PBFA97CFB590B2093"
+		},
+		"fieldConfig": {
+		  "defaults": {
+			"color": {
+			  "mode": "palette-classic"
+			},
+			"custom": {
+			  "hideFrom": {
+				"legend": false,
+				"tooltip": false,
+				"viz": false
+			  }
+			},
+			"mappings": []
+		  },
+		  "overrides": []
+		},
+		"gridPos": {
+		  "h": 8,
+		  "w": 4,
+		  "x": 4,
+		  "y": 38
+		},
+		"id": 15,
+		"options": {
+		  "legend": {
+			"displayMode": "list",
+			"placement": "bottom",
+			"showLegend": true
+		  },
+		  "pieType": "pie",
+		  "reduceOptions": {
+			"calcs": [
+			  "lastNotNull"
+			],
+			"fields": "",
+			"values": false
+		  },
+		  "tooltip": {
+			"maxHeight": 600,
+			"mode": "single",
+			"sort": "none"
+		  }
+		},
+		"targets": [
+		  {
+			"datasource": {
+			  "type": "prometheus",
+			  "uid": "PBFA97CFB590B2093"
+			},
+			"disableTextWrap": false,
+			"editorMode": "builder",
+			"expr": "back_total_friend_requests{role=\"sender\"}",
+			"fullMetaSearch": false,
+			"includeNullMetadata": true,
+			"instant": false,
+			"legendFormat": "{{user}}({{role}})",
+			"range": true,
+			"refId": "A",
+			"useBackend": false
+		  }
+		],
+		"title": "Friend request send per user",
+		"type": "piechart"
+	  }
+	],
+	"schemaVersion": 39,
+	"tags": [],
+	"templating": {
+	  "list": []
+	},
+	"time": {
+	  "from": "now-30m",
+	  "to": "now"
+	},
+	"timeRangeUpdatedDuringEditOrView": false,
+	"timepicker": {},
+	"timezone": "browser",
+	"title": "Transcendence",
+	"uid": "cdqk3mmrfgcu8c",
+	"version": 1,
+	"weekStart": ""
+  }

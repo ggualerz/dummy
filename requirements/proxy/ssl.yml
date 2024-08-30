@@ -1,0 +1,33 @@
+tls:
+  options:
+    default:
+      minVersion: "VersionTLS12"                          # Minimum TLS Version
+  certificates:
+    - certFile: /ssl/{{env "FQDN"}}.crt
+      keyFile: /ssl/{{env "FQDN"}}.key
+    - certFile: /ssl/proxy.crt
+      keyFile: /ssl/proxy.key
+http:
+  serversTransports:
+    transport_prometheus:
+      serverName: "prometheus"
+      rootCAs:
+        - /ssl/CA.crt
+    transport_grafana:
+      serverName: "grafana"
+      rootCAs:
+        - /ssl/CA.crt
+    transport_kibana:
+      serverName: "kibana"
+      rootCAs:
+        - /ssl/CA.crt
+    transport_cadvisor:
+      serverName: "cadvisor"
+    transport_frontend:
+      serverName: "frontend"
+      rootCAs:
+        - /ssl/CA.crt
+    transport_websocket:
+      serverName: "frontend"
+      rootCAs:
+        - /ssl/CA.crt

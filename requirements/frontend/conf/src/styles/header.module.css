@@ -1,0 +1,45 @@
+@font-face {
+    font-family: "tmplogo";
+    src: url("../public/fonts/ALBAS___.TTF") format("truetype");
+}
+
+@keyframes glow {
+	0% { color: rgba(255, 255, 255, 0.7); }
+    50% { color: rgb(0, 0, 0); }
+    100% { color: rgba(255, 255, 255, 0.7); }
+}
+
+.logo {
+	font-size: 28px;
+	color: #ffffff; 
+	font-family: 'tmplogo';	
+}
+
+.logo:hover{
+	animation: glow 10s infinite;
+}
+
+.header {
+    position: fixed;
+	top: 0pt;
+	width: 100%;
+	z-index: 1000;
+}
+
+
+
+/* footer part */
+.footer {
+	position: fixed;
+	bottom: 0px;
+	background-color: #343a40;
+	color: #ffffff;
+	text-align: center;
+	width: 100%;
+  }
+  
+  .footer p {
+	margin-bottom: 0px;
+  }
+
+ 

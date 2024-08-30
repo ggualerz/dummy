@@ -1,0 +1,13 @@
+http:
+  host: 0.0.0.0
+xpack:
+  monitoring:
+    enabled: true
+    elasticsearch:
+      username: logstash_system
+      password: ${ELASTIC_LOGSTASH_PASSWORD}
+      hosts: ["https://elasticsearch:9200"]
+      ssl:
+        key:  /ssl/logstash.key
+        certificate:  /ssl/logstash.crt
+        certificate_authority: /ssl/CA.crt

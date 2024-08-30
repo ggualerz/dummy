@@ -1,0 +1,421 @@
+#All lines ending with #ELK_LINES will be commented or commented out with the init script
+volumes:
+  prometheus_data: {}
+  elasticsearch_data: {}
+  logstash_data: {}
+  kibana_data: {}
+  traefik_data: {}
+  db_data: {}
+  media: {}
+
+#To remove logstash or ELK, comment the logstash service and comment all logging directive for EACH CONTAINERS !
+
+services:
+  proxy: #Reverse-proxy used to expose all web services to the client, reverse on subpath, run on Traefik v3
+    build: ./requirements/proxy
+    container_name: proxy
+    command: #Startup traefik cmd to populate the static conf
+      - "--log.level=INFO" #Mode dispo : RACE, DEBUG, INFO, WARN, ERROR, FATAL, and PANIC
+      - "--accesslog=true"
+      - "--api=true" # For Dashboard
+      - "--api.insecure=false"
+      - "--api.dashboard=true"
+      - "--providers.docker=true" #Search in docker labels
+      - "--providers.docker.exposedByDefault=false" #Do not expose every container, need the traefik.enable=true label
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websocket.address=:4433"
+      - "--entrypoints.websecure.asDefault=true"
+      #Smooth redirection http to https
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      #Cert related dyn config
+      - "--providers.file.filename=/app/ssl.yml"
+      #Constraint to avoid multiple traefik conflicts (while dev stage)
+      - "--providers.docker.constraints=Label(`my.zone`, `${PROJECT_NAME}`)"
+      # Enable of prometheus metrics
+      - "--metrics.prometheus=true"
+      - "--metrics.prometheus.addEntryPointsLabels=true"
+      - "--metrics.prometheus.addEntryPointsLabels=true"
+      - "--metrics.prometheus.addServicesLabels=true"
+      # Cert Resolver for letencrypt, will use the generated cert if it cannot perform the acme challenge
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_MAIL}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/acme/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+    labels:
+      - "my.zone=${PROJECT_NAME}"
+      - "traefik.enable=true"
+      # Basic Auth for /adm ressources
+      - "traefik.http.middlewares.adm_auth.basicauth.users=${ADM_PASSWD}"
+      # Whitelist IP for /adm ressources
+      - "traefik.http.middlewares.adm_ipallowlist.ipallowlist.sourcerange=${ADM_ACL_IP}"
+      # API & Dashboard
+      - "traefik.http.routers.api.tls=true"
+      - "traefik.http.routers.api.rule=(Host(`${FQDN}`) && PathPrefix(`/adm/traefik`) || HeaderRegexp(`Referer`, `.*/traefik/.*`))"
+      - "traefik.http.routers.api.middlewares=adm_ipallowlist, adm_auth, traefik_stripe"
+      - "traefik.http.middlewares.traefik_stripe.stripprefix.prefixes=/adm/traefik"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.service=api@internal"
+      # Metrics configuration -- for prometheus
+      - "traefik.http.routers.metrics.tls=true"
+      - "traefik.http.routers.metrics.rule=Host(`proxy`) && PathPrefix(`/adm/metrics`)"
+      - "traefik.http.routers.metrics.service=prometheus@internal"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      #LetEncrypt, Comment it out if you don't want to use it
+      - "traefik.http.routers.api.tls.certresolver=letsencrypt"
+    ports:
+      - "${FRONT_HTTP_PORT}:80" #Will be 80 when submiting
+      - "${FRONT_PORT}:443" #Will be 443 when submiting
+      - "${WEBSOCKET_PORT}:4433" #Will be 4433 when submiting
+    volumes:
+      - ${DOCKER_SOCKET}:/var/run/docker.sock:ro
+      - traefik_data:/acme
+    env_file:
+      - .env
+    depends_on:
+      logstash: #ELK_LINES
+        condition: service_healthy #ELK_LINES
+      frontend:
+        condition: service_healthy
+    logging: #ELK_LINES
+      driver: syslog #ELK_LINES
+      options: #ELK_LINES
+        syslog-address: "tcp+tls://localhost:${LOGSTASH_PORT}" #ELK_LINES
+        syslog-tls-ca-cert: "${REQUIREMENTS_DIR}/proxy/CA.crt" #ELK_LINES
+        syslog-tls-cert: "${REQUIREMENTS_DIR}/proxy/proxy.crt" #ELK_LINES
+        syslog-tls-key: "${REQUIREMENTS_DIR}/proxy/proxy.key" #ELK_LINES
+        tag: traefik #For grok patterns #ELK_LINES
+    networks:
+      default:
+        aliases:
+          - proxy #Used for inter containers communication, certs will match this fqdn
+    restart: unless-stopped
+
+  db:
+    build: ./requirements/db
+    container_name: db
+    command: -c ssl=on -c ssl_cert_file=/ssl/db.crt -c ssl_key_file=/ssl/db.key
+    env_file:
+      - .env
+    volumes: #Volumes binded should be changed before submiting the project
+      - db_data:/var/lib/postgresql/data
+    networks:
+      default:
+        aliases:
+          - db
+    depends_on: #ELK_LINES
+      logstash: #ELK_LINES
+        condition: service_healthy #ELK_LINES
+    logging: #ELK_LINES
+      driver: syslog #ELK_LINES
+      options: #ELK_LINES
+        syslog-address: "tcp+tls://localhost:${LOGSTASH_PORT}" #ELK_LINES
+        syslog-tls-ca-cert: "${REQUIREMENTS_DIR}/db/CA.crt" #ELK_LINES
+        syslog-tls-cert: "${REQUIREMENTS_DIR}/db/db.crt" #ELK_LINES
+        syslog-tls-key: "${REQUIREMENTS_DIR}/db/db.key" #ELK_LINES
+        tag: postgresql #For grok patterns #ELK_LINES
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s  
+    restart: unless-stopped
+
+  backend:
+    build: ./requirements/backend
+    container_name: backend
+    env_file:
+      - .env
+    volumes: #TODO Volumes binded should be changed before submiting the project
+      - media:/usr/app/backend/media
+    depends_on:
+      logstash: #ELK_LINES
+        condition: service_healthy #ELK_LINES
+      db:
+        condition: service_healthy
+    logging: #ELK_LINES
+      driver: syslog #ELK_LINES
+      options: #ELK_LINES
+        syslog-address: "tcp+tls://localhost:${LOGSTASH_PORT}" #ELK_LINES
+        syslog-tls-ca-cert: "${REQUIREMENTS_DIR}/backend/CA.crt" #ELK_LINES
+        syslog-tls-cert: "${REQUIREMENTS_DIR}/backend/backend.crt" #ELK_LINES
+        syslog-tls-key: "${REQUIREMENTS_DIR}/backend/backend.key" #ELK_LINES
+        tag: gunicorn #For grok patterns #ELK_LINES
+    networks:
+      default:
+        aliases:
+          - backend #Used for inter containers communication, certs will match this fqdn
+    healthcheck: #Basic healtcheck that curl the API, if it respond the service is UP, the curl is in http, the API is never used between containers and not sensible, it sleep to be sure its up to listen for all other containers
+      test: (curl --fail https://backend:8000/api/health/ || exit 1)
+      interval: 10s
+      timeout: 30s
+      retries: 50 #Increase this number if the docker host is a toaster, like the macs mini
+    restart: unless-stopped
+    
+  backendimg:
+    build: ./requirements/backendimg
+    container_name: backendimg
+    env_file:
+      - .env
+    volumes: #TODO Volumes binded should be changed before submiting the project
+      - media:/var/www/html/media:ro
+    depends_on: #ELK_LINES
+      logstash: #ELK_LINES
+        condition: service_healthy #ELK_LINES
+    logging: #ELK_LINES
+      driver: syslog #ELK_LINES
+      options: #ELK_LINES
+        syslog-address: "tcp+tls://localhost:${LOGSTASH_PORT}" #ELK_LINES
+        syslog-tls-ca-cert: "${REQUIREMENTS_DIR}/backendimg/CA.crt" #ELK_LINES
+        syslog-tls-cert: "${REQUIREMENTS_DIR}/backendimg/backendimg.crt" #ELK_LINES
+        syslog-tls-key: "${REQUIREMENTS_DIR}/backendimg/backendimg.key" #ELK_LINES
+        tag: nginx #For grok patterns #ELK_LINES
+    networks:
+      default:
+        aliases:
+          - backendimg #Used for inter containers communication, certs will match this fqdn
+    restart: unless-stopped
+
+  frontend:
+    build: ./requirements/frontend
+    container_name: frontend
+    labels: #Label used to dynamically conf traefik
+      - "my.zone=${PROJECT_NAME}"
+      - "traefik.enable=true"
+
+      # front
+      - "traefik.http.routers.frontend.rule=Host(`${FQDN}`)"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+      - "traefik.http.routers.frontend.service=frontend@docker"
+      # TLS Proxy to service
+      - "traefik.http.services.frontend.loadbalancer.server.scheme=https" #Communicate with the service in HTTPS
+      - "traefik.http.services.frontend.loadbalancer.serverstransport=transport_frontend@file"
+
+      # websockets
+      - "traefik.http.routers.websocket.rule=Host(`${FQDN}`)"
+      - "traefik.http.routers.websocket.tls=true"
+      - "traefik.http.routers.websocket.entrypoints=websocket"
+      - "traefik.http.services.websocket.loadbalancer.server.port=3001"
+      - "traefik.http.routers.websocket.service=websocket@docker"
+
+      #LetEncrypt, Comment it out if you don't want to use it
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.websocket.tls.certresolver=letsencrypt"
+
+      # TLS Proxy to service
+      - "traefik.http.services.websocket.loadbalancer.server.scheme=https" #Communicate with the service in HTTPS
+      - "traefik.http.services.websocket.loadbalancer.serverstransport=transport_websocket@file"
+    env_file:
+      - .env
+    networks:
+      default:
+        aliases:
+          - frontend #Used for inter containers communication, certs will match this fqdn
+    healthcheck: #Basic healtcheck that curl the front
+      test: (curl --fail https://frontend:3000 || exit 1)
+      interval: 10s
+      timeout: 30s
+      retries: 50 #Increase this number if the docker host is a toaster, like the macs mini
+    logging: #ELK_LINES
+      driver: syslog #ELK_LINES
+      options: #ELK_LINES
+        syslog-address: "tcp+tls://localhost:${LOGSTASH_PORT}" #ELK_LINES
+        syslog-tls-ca-cert: "${REQUIREMENTS_DIR}/frontend/CA.crt" #ELK_LINES
+        syslog-tls-cert: "${REQUIREMENTS_DIR}/frontend/frontend.crt" #ELK_LINES
+        syslog-tls-key: "${REQUIREMENTS_DIR}/frontend/frontend.key" #ELK_LINES
+        tag: nextjs #For grok patterns #ELK_LINES
+    depends_on:
+      logstash: #ELK_LINES
+        condition: service_healthy #ELK_LINES
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+##Monitoring
+  prometheus: #Prometheus is the metric collector used by Grafana
+    build: ./requirements/prometheus
+    container_name: prometheus
+    labels: #Label used to dynamically conf traefik
+      - "my.zone=${PROJECT_NAME}"
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus.tls=true"
+      - "traefik.http.routers.prometheus.rule=Host(`${FQDN}`) && PathPrefix(`/adm/prometheus`)"
+      - "traefik.http.routers.prometheus.entrypoints=websecure"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+      # TLS Proxy to service
+      - "traefik.http.services.prometheus.loadbalancer.server.scheme=https" #Communicate with the service in HTTPS
+      - "traefik.http.services.prometheus.loadbalancer.serverstransport=transport_prometheus@file"
+      # Auth
+      - "traefik.http.routers.prometheus.middlewares=adm_ipallowlist, adm_auth"
+      #LetEncrypt, Comment it out if you don't want to use it
+      - "traefik.http.routers.prometheus.tls.certResolver=letsencrypt"
+    env_file:
+      - .env
+    volumes: #Volume not binded OK
+      - prometheus_data:/prometheus
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      default:
+        aliases:
+          - prometheus #Used for inter containers communication, certs will match this fqdn
+    restart: unless-stopped
+  
+  grafana: #Grafana is a graph app useful for visualizing metrics
+    build: ./requirements/grafana
+    container_name: grafana
+    labels: #Label used to dynamically conf traefik
+      - "my.zone=${PROJECT_NAME}"
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.routers.grafana.rule=Host(`${FQDN}`) && PathPrefix(`/adm/grafana`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      # TLS Proxy to service
+      - "traefik.http.services.grafana.loadbalancer.server.scheme=https" #Communicate with the service in HTTPS
+      - "traefik.http.services.grafana.loadbalancer.serverstransport=transport_grafana@file"
+      # Auth
+      - "traefik.http.routers.grafana.middlewares=adm_ipallowlist, adm_auth"
+      #LetEncrypt, Comment it out if you don't want to use it
+      - "traefik.http.routers.grafana.tls.certresolver=letsencrypt"
+    env_file:
+      - .env
+    networks:
+      default:
+        aliases:
+          - grafana
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+  postgres-exporter: #Postgres-Exporter is a service to create an interface between prostgre and prometheus
+    build: ./requirements/postgres-exporter
+    container_name: postgres-exporter
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - postgres-exporter #Used for inter containers communication, certs will match this fqdn
+    restart: unless-stopped
+  
+  cadvisor: #Cadvisor is a service use to monitor the current host and docker daemon, its requested by prometheus but also acessible via web
+    build: ./requirements/cadvisor
+    image: cadvisor
+    command:
+      - "--url_base_prefix=/adm/cadvisor"
+      - "--housekeeping_interval=60s"
+      - "--docker_only=true"
+    labels: #Label used to dynamically conf traefik
+      - "my.zone=${PROJECT_NAME}"
+      - "traefik.enable=true"
+      - "traefik.http.routers.cadvisor.tls=true"
+      - "traefik.http.routers.cadvisor.rule=Host(`${FQDN}`) && PathPrefix(`/adm/cadvisor`)"
+      - "traefik.http.routers.cadvisor.entrypoints=websecure"
+      - "traefik.http.services.cadvisor.loadbalancer.server.port=8080"
+
+      # TLS Proxy to service, sadly cadvisor doesnt support native ssl
+      # - "traefik.http.services.cadvisor.loadbalancer.server.scheme=https" #Communicate with the service in HTTPS
+      # - "traefik.http.services.cadvisor.loadbalancer.serverstransport=transport_cadvisor@file"
+      # Auth
+      - "traefik.http.routers.cadvisor.middlewares=adm_ipallowlist, adm_auth"
+      #LetEncrypt, Comment it out if you don't want to use it
+      - "traefik.http.routers.cadvisor.tls.certresolver=letsencrypt"
+    networks:
+      default:
+        aliases:
+          - cadvisor
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+##ELK
+  elasticsearch:
+    build: ./requirements/elasticsearch
+    container_name: elasticsearch
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data/
+    env_file:
+      - .env
+    networks:
+      default:
+        aliases:
+          - elasticsearch #Used for inter containers communication, certs will match this fqdn
+    healthcheck: #Basic healtcheck that cat the API, if it respond the service is UP
+      test: curl -s -X GET https://elasticsearch:9200 -u ${ELASTIC_USERNAME}:${ELASTIC_PASSWORD} > /dev/null || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 30 #Increade this number if the server is a toaster, like the macs mini
+    environment:
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    restart: unless-stopped
+
+  logstash:
+    build: ./requirements/logstash
+    container_name: logstash
+    ports: #Use for Syslog over TLS
+      - ${LOGSTASH_PORT}:6514
+    env_file:
+      - .env
+    volumes:
+      - logstash_data:/usr/share/logstash/data
+    networks:
+      default:
+        aliases:
+          - logstash #Used for inter containers communication, certs will match this fqdn
+    depends_on:
+      kibana:
+        condition: service_healthy
+
+    healthcheck: #Basic healtcheck that curl the API, if it respond the service is UP, the curl is in http, the API is never used between containers and not sensible, it sleep to be sure its up to listen for all other containers
+      test: (curl --fail http://logstash:9600 || exit 1) && sleep 10
+      interval: 10s
+      timeout: 30s
+      retries: 50 #Increase this number if the docker host is a toaster, like the macs mini
+    environment:
+      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+    restart: unless-stopped
+
+  kibana:
+    build: ./requirements/kibana
+    container_name: kibana
+    labels: #Label used to dynamically conf traefik
+      - "my.zone=${PROJECT_NAME}"
+      - "traefik.enable=true"
+      - "traefik.http.routers.kibana.tls=true"
+      - "traefik.http.routers.kibana.rule=Host(`${FQDN}`) && PathPrefix(`/adm/kibana`)"
+      - "traefik.http.routers.kibana.entrypoints=websecure"
+      - "traefik.http.services.kibana.loadbalancer.server.port=5601"
+      # TLS Proxy to service
+      - "traefik.http.services.kibana.loadbalancer.server.scheme=https" #Communicate with the service in HTTPS
+      - "traefik.http.services.kibana.loadbalancer.serverstransport=transport_kibana@file"
+      # Auth
+      - "traefik.http.routers.kibana.middlewares=adm_ipallowlist, adm_auth"
+      #LetEncrypt, Comment it out if you don't want to use it
+      - "traefik.http.routers.kibana.tls.certresolver=letsencrypt"
+    env_file:
+      - .env
+    volumes:
+      - kibana_data:/usr/share/kibana/data
+    networks:
+      default:
+        aliases:
+          - kibana #Used for inter containers communication, certs will match this fqdn
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck: #Basic healtcheck that curl the API, if it respond the service is UP, the curl is in http, the API is never used between containers and not sensible, it sleep to be sure its up to listen for all other containers
+      test: (curl --fail https://kibana:5601/adm/kibana/api/status || exit 1)
+      interval: 10s
+      timeout: 30s
+      retries: 50 #Increase this number if the docker host is a toaster, like the macs mini
+    restart: unless-stopped

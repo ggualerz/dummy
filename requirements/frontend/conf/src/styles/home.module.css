@@ -1,0 +1,89 @@
+
+.container{
+	min-width: 100vw;
+    min-height: 100vh;
+	background-image: url('../public/images/stars.png'); 
+	background-size: 25%;
+	background-position: center;
+	background-repeat: repeat;
+}
+
+.videoBackground {	/* to make full gif appear*/
+    position: relative;
+    width: 95vw;
+    height: 95vh ;
+    overflow: hidden;
+}
+
+.videoBackground iframe {	/*background gif*/
+	position: absolute;
+    width: 560px;
+    height: 600px;
+    top: 50%;
+    left: 50%;
+	transform: translate(-40%, -50%);
+	z-index: 0;
+}
+
+.videoOverlay {		/*background black*/
+    position: absolute;
+    top: 0;
+    left: 0;
+ 
+    z-index: -1; /*black is under the gif*/
+}
+
+@keyframes glow {
+	0% { color: rgba(102, 102, 102, 0.7); }
+    50% { color: rgb(255, 255, 255); }
+    100% { color: rgba(102, 102, 102, 0.7); }
+}
+
+@font-face {
+    font-family: "title font";
+    src: url("../public/fonts/National\ Cartoon.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "buttons";
+    src: url("../public/fonts/Doodle.ttf") format("truetype");
+}
+
+
+
+.title{
+	position: absolute;
+	text-align: center;
+    z-index: 2; 
+    top: 60%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
+    
+	color:#ad5df8;
+	font-family: "title font", sans-serif;
+	font-size: 3em;
+}
+
+.buttons {
+	text-align:center;
+}
+
+.button {
+    display: inline;
+    background: linear-gradient(to right, #ad5df8, #beb89e);
+    -webkit-background-clip: text;
+	color:transparent;
+    text-decoration:none;
+    margin-right: 32px;
+	position: relative;
+	top: 1cm;
+	font-family: "buttons", sans-serif;
+	font-size: 2.2em;
+	transition: background-color 0.3s ease;
+	margin: 2cm;
+}
+
+.button:hover {
+	animation: glow 1s infinite; 
+}
+
